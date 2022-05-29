@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use App\Http\Services\ApiResponse;
 use App\Models\StudentToAssessment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class StudentToAssessmentController extends Controller
@@ -14,12 +15,14 @@ class StudentToAssessmentController extends Controller
     public function store(Request $request)
     {
         $data = $request->all();
+
         $validator = $this->getStoreValidator($data);
 
         if ($validator->fails()) {
             return (new ApiResponse())->setError($validator->errors()->first())->get();
         }
 
+        $this->addTeacherId($data);
         $this->saveStore($data);
 
         return (new ApiResponse())->get();
@@ -34,9 +37,17 @@ class StudentToAssessmentController extends Controller
             return (new ApiResponse())->setError($validator->errors()->first())->get();
         }
 
-        $this->saveStores((int) $request->id_teacher, $data);
+        $this->addTeacherId($data);
+        $this->saveStores($data);
 
         return (new ApiResponse())->get();
+    }
+
+    /** @noinspection PhpUndefinedFieldInspection */
+    private function addTeacherId(&$data): void
+    {
+        $teacher = Auth::user();
+        $data['id_teacher'] = $teacher->id_teacher;
     }
 
     private function saveStore(array $data)
@@ -51,7 +62,6 @@ class StudentToAssessmentController extends Controller
     private function getStoreValidator(array $data): \Illuminate\Contracts\Validation\Validator
     {
         return Validator::make($data, [
-            'id_teacher' => 'required|numeric|min:1|exists:teachers,id_teacher',
             'id_student' => 'required|numeric|min:1|exists:students,id_student',
             'id_assessment' => 'required|numeric|min:1|exists:assessments,id_assessment',
         ]);
@@ -60,7 +70,6 @@ class StudentToAssessmentController extends Controller
     private function getStoresValidator(array $data): \Illuminate\Contracts\Validation\Validator
     {
         $validator = Validator::make($data, [
-            'id_teacher' => 'required|numeric|min:1|exists:teachers,id_teacher',
             'assessments' => 'required|array',
         ]);
 
@@ -82,11 +91,11 @@ class StudentToAssessmentController extends Controller
         return $validator;
     }
 
-    private function saveStores(int $id_teacher, array $data): void
+    private function saveStores(array $data): void
     {
         foreach ($data['assessments'] as $item) {
             $studentToAssessment = new StudentToAssessment();
-            $studentToAssessment->id_teacher = $id_teacher;
+            $studentToAssessment->id_teacher = $data['id_teacher'];
             $studentToAssessment->id_student = $item['id_student'];
             $studentToAssessment->id_assessment = $item['id_assessment'];
             $studentToAssessment->save();

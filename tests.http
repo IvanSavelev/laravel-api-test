@@ -1,6 +1,15 @@
 GET http://laravel-api-test.local/api/teachers
 
 ###
+POST http://laravel-api-test.local/api/login
+Content-Type: application/json
+
+{
+  "name" : "Mrs. Georgiana Lueilwitz",
+  "password" : "password"
+}
+
+###
 GET http://laravel-api-test.local/api/students
 
 ###
@@ -12,18 +21,18 @@ GET http://laravel-api-test.local/api/students/1
 ###
 POST http://laravel-api-test.local/api/students_to_assessments
 Content-Type: application/json
+Authorization: Bearer 1|NV2GtFNhtfSEF8Cbl3bSUoxLi0ryORiupgoWIRCK
 
 {
-  "id_teacher" : "1",
   "id_student" : "1",
   "id_assessment" : "1"
 }
 ###
 POST http://laravel-api-test.local/api/students_to_assessments/stores
 Content-Type: application/json
+Authorization: Bearer 1|NV2GtFNhtfSEF8Cbl3bSUoxLi0ryORiupgoWIRCK
 
 {
-  "id_teacher" : "1",
   "assessments" : [
     {"id_student" : "1", "id_assessment" : "1"},
     {"id_student" : "2", "id_assessment" : "2"}
