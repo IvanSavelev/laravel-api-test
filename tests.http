@@ -1,0 +1,25 @@
+GET http://laravel-api-test.local/api/teachers
+
+###
+GET http://laravel-api-test.local/api/students
+
+###
+GET http://laravel-api-test.local/api/students
+
+###
+GET http://laravel-api-test.local/api/students/1
+
+###
+###
+POST http://laravel-api-test.local/api/students_to_assessments
+Content-Type: application/json
+
+{
+  "id_teacher" : "1",
+  "id_student" : "1",
+  "id_assessment" : "1"
+}
+###
+
+
+
