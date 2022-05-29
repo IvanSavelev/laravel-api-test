@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Http\Services\ApiResponse;
 use App\Models\Teacher;
 
 class TeacherController extends Controller
@@ -12,6 +13,6 @@ class TeacherController extends Controller
     {
         $teachers = Teacher::all()->toArray();
 
-        return response()->json(['status' => 1, 'errors' => null, 'data' => $teachers]);
+        return (new ApiResponse($teachers))->get();
     }
 }
